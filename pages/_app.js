@@ -14,6 +14,6 @@ export default function App({ Component, pageProps }) {
     <>
       <GlobalStyles />
       <Component {...pageProps} />
-    </>
+     </>
   )
 }
