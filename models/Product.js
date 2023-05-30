@@ -17,6 +17,6 @@ const productSchema = new Schema({
     ref: "Category",
   },
   properties: { type: Object },
-});
+}, { timestamps: true });
 
 export const Product = models.Product || model('Product', productSchema);
