@@ -14,13 +14,19 @@ const StyledButton = styled.button`
   align-items: center;
   text-decoration: none;
   font-weight: 500;
-  font-family: 'roboto', sans-serif;
+  font-family: "roboto", sans-serif;
 
   svg {
     height: 16px;
     margin-right: 5px;
   }
 
+  ${(props) =>
+    props.block &&
+    css`
+      display: block;
+      width: 100%;
+    `}
   ${(props) =>
     props.white &&
     !props.outlined &&
@@ -37,11 +43,26 @@ const StyledButton = styled.button`
       border: 1px solid #fff;
     `};
   ${(props) =>
+    props.black &&
+    !props.outlined &&
+    css`
+      background-color: black;
+      color: #fff;
+    `};
+  ${(props) =>
+    props.black &&
+    props.outlined &&
+    css`
+      background-color: transparent;
+      color: #000;
+      border: 1px solid #000;
+    `};
+  ${(props) =>
     props.primary &&
     !props.outlined &&
     css`
-      background-color: ${primary};
-      border: 1px solid ${primary};
+      background-color: #5542f6;
+      border: 1px solid #5542f6;
       color: #fff;
     `}
   ${(props) =>
