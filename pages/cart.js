@@ -56,14 +56,17 @@ export default function cart() {
   const [email, setEmail] = useState("");
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
-  const [streetAdress, setStreetAdress] = useState("");
+  const [streetAddress, setStreetAdress] = useState("");
   const [country, setCountry] = useState("");
+  const [successUrl, setSuccessUrl] = useState(false);
 
   useEffect(() => {
     if (cartProducts?.length > 0) {
       axios.post(`/api/cart`, { ids: cartProducts }).then((response) => {
         setProducts(response.data);
       });
+    } else {
+      setProducts([]);
     }
   }, [cartProducts]);
 
@@ -81,6 +84,46 @@ export default function cart() {
   for (const productId of cartProducts) {
     const price = products.find((p) => p._id === productId)?.price || 0;
     total += price;
+  }
+
+  async function goToPayment() {
+    const response = await axios.post("/api/checkout", {
+      name,
+      email,
+      city,
+      postalCode,
+      streetAddress,
+      country,
+      cartProducts,
+    });
+
+    if (response.data.url) {
+      window.location = response.data.url;
+    }
+  }
+
+  useEffect(() => {
+    if (window.location.href.includes("success")) {
+      setSuccessUrl(true)
+    } else {
+      setSuccessUrl(false);
+    }
+  }, [successUrl])
+
+  if (successUrl) {
+    return (
+      <>
+        <Header />
+        <Center>
+          <ColumnsWrapper>
+            <Box>
+              <h1>Thanks for your order!</h1>
+              <p>We will email you when your order is sent.</p>
+            </Box>
+          </ColumnsWrapper>
+        </Center>
+      </>
+    );
   }
 
   return (
@@ -152,12 +195,14 @@ export default function cart() {
 
               <Input
                 value={name}
+                name="name"
                 onChange={(e) => setName(e.target.value)}
                 type="text"
                 placeholder="Name"
               />
               <Input
                 value={email}
+                name="email"
                 onChange={(e) => setEmail(e.target.value)}
                 type="text"
                 placeholder="Email"
@@ -165,31 +210,35 @@ export default function cart() {
               <CityHolder>
                 <Input
                   value={city}
+                  name="city"
                   onChange={(e) => setCity(e.target.value)}
                   type="text"
                   placeholder="City"
                 />
                 <Input
                   value={postalCode}
+                  name="postalCode"
                   onChange={(e) => setPostalCode(e.target.value)}
                   type="text"
                   placeholder="Postal Code"
                 />
               </CityHolder>
               <Input
-                value={streetAdress}
+                name="streetAddress"
+                value={streetAddress}
                 onChange={(e) => setStreetAdress(e.target.value)}
                 type="text"
                 placeholder="Street Address"
               />
               <Input
                 value={country}
+                name="country"
                 onChange={(e) => setCountry(e.target.value)}
                 type="text"
                 placeholder="Country"
               />
 
-              <Button block primary>
+              <Button block primary onClick={goToPayment}>
                 Continue to payment
               </Button>
             </Box>
